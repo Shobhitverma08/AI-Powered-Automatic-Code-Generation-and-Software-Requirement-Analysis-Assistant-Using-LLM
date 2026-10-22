@@ -28,9 +28,16 @@ def index():
     """Renders main single-page web app."""
     return render_template("index.html")
 
+@app.after_request
+def add_cache_headers(response):
+    """Enables browser caching for static assets to eliminate redundant disk reads."""
+    if request.path.startswith('/static/'):
+        response.headers['Cache-Control'] = 'public, max-age=86400'
+    return response
+
 @app.route("/api/status", methods=["GET"])
 def get_status():
-    """Returns application status, demo mode flag, and dashboard counts."""
+    """Returns application status, demo mode flag, dashboard counts, and runtime cache stats."""
     stats = database.get_dashboard_stats()
     recent = database.get_recent_projects(limit=5)
     return jsonify({
@@ -39,8 +46,16 @@ def get_status():
         "subtitle": "AI-Powered Software Requirement & Code Assistant",
         "is_demo_mode": llm_service.is_demo_mode(),
         "stats": stats,
-        "recent_projects": recent
+        "recent_projects": recent,
+        "model_name": llm_service.model_name,
+        "cache_stats": llm_service.get_cache_stats()
     })
+
+@app.route("/api/test-connection", methods=["GET"])
+def test_connection():
+    """Performs live connectivity verification with Gemini API."""
+    result = llm_service.test_connection()
+    return jsonify(result)
 
 @app.route("/api/analyze", methods=["POST"])
 def analyze_requirement():

@@ -23,3 +23,6 @@ ENV/
 .vscode/
 .idea/
 .DS_Store
+
+codemind.db-shm
+codemind.db-wal

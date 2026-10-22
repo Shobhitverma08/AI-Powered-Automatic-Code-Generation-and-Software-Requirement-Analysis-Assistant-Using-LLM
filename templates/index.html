@@ -3,152 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeMind AI - AI Software Requirement & Code Assistant</title>
-    <!-- Google Fonts Inter -->
+    <title>CodeMind AI — Software Requirement & Code Engineering Assistant</title>
+    <!-- Modern Typography: Inter for UI & JetBrains Mono for Code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- Main Eyecatchy Light CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
 <div id="app-container">
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-        <div class="brand-header">
-            <div class="brand-logo">CM</div>
-            <div>
-                <div class="brand-title">CodeMind AI</div>
-                <div class="brand-subtitle">Software & Code Assistant</div>
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+    <!-- Collapsible Sidebar -->
+    <aside id="app-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-badge">
+                <div class="brand-icon">
+                    <i data-lucide="terminal" class="icon-brand"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">CodeMind</span>
+                    <span class="brand-tag">STUDIO</span>
+                </div>
             </div>
+            <button id="btn-collapse-sidebar" class="sidebar-toggle-btn" title="Toggle Sidebar">
+                <i data-lucide="panel-left-close"></i>
+            </button>
         </div>
 
-        <ul class="nav-menu">
-            <li class="nav-item active" data-tab="dashboard">
-                <span class="nav-icon">📊</span>
-                <span>Dashboard</span>
-            </li>
-            <li class="nav-item" data-tab="analyzer">
-                <span class="nav-icon">🎯</span>
-                <span>Requirement Analyzer</span>
-            </li>
-            <li class="nav-item" data-tab="generator">
-                <span class="nav-icon">⚡</span>
-                <span>Code Generator</span>
-            </li>
-            <li class="nav-item" data-tab="reviewer">
-                <span class="nav-icon">🔍</span>
-                <span>Code Reviewer</span>
-            </li>
-            <li class="nav-item" data-tab="explainer">
-                <span class="nav-icon">💡</span>
-                <span>Code Explainer</span>
-            </li>
-            <li class="nav-item" data-tab="docs">
-                <span class="nav-icon">📚</span>
-                <span>Documentation Gen</span>
-            </li>
-            <li class="nav-item" data-tab="history">
-                <span class="nav-icon">📜</span>
-                <span>Project History</span>
-            </li>
-        </ul>
+        <div class="sidebar-nav-container">
+            <div class="nav-section-label">WORKSPACE</div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard" class="nav-icon"></i>
+                    <span class="nav-label">Overview</span>
+                </li>
+                <li class="nav-item" data-tab="analyzer">
+                    <i data-lucide="clipboard-list" class="nav-icon"></i>
+                    <span class="nav-label">Requirements</span>
+                </li>
+                <li class="nav-item" data-tab="generator">
+                    <i data-lucide="code-2" class="nav-icon"></i>
+                    <span class="nav-label">Generate Code</span>
+                </li>
+                <li class="nav-item" data-tab="reviewer">
+                    <i data-lucide="shield-check" class="nav-icon"></i>
+                    <span class="nav-label">Code Review</span>
+                </li>
+                <li class="nav-item" data-tab="explainer">
+                    <i data-lucide="sparkles" class="nav-icon"></i>
+                    <span class="nav-label">Explain Code</span>
+                </li>
+                <li class="nav-item" data-tab="docs">
+                    <i data-lucide="file-text" class="nav-icon"></i>
+                    <span class="nav-label">Documentation</span>
+                </li>
+                <li class="nav-item" data-tab="history">
+                    <i data-lucide="history" class="nav-icon"></i>
+                    <span class="nav-label">Project History</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Footer Status Card -->
+        <div class="sidebar-footer">
+            <div class="engine-card">
+                <div class="engine-status">
+                    <span class="status-indicator-dot" id="sidebar-engine-dot"></span>
+                    <span class="engine-title" id="sidebar-engine-name">Gemini 3.8 Flash</span>
+                </div>
+                <div class="engine-desc" id="sidebar-engine-mode">Ready · SQLite Connected</div>
+            </div>
+        </div>
     </aside>
 
-    <!-- Main Content Viewport -->
+    <!-- Main Viewport -->
     <main class="main-content">
-        <!-- Demo Mode Alert Banner -->
-        <div id="demo-mode-banner" class="demo-banner" style="display: none;">
-            <span>⚠️ <strong>Demo Mode Active</strong> — Using sample AI responses. Add <code>GEMINI_API_KEY</code> to <code>.env</code> for live API generation.</span>
-            <span class="badge badge-medium">Demo Mode</span>
-        </div>
+        <!-- Top App Bar -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button id="btn-mobile-menu" class="mobile-menu-btn" title="Open Navigation">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="page-title-group">
+                    <h1 id="view-title" class="page-title">Overview</h1>
+                    <p id="view-desc" class="page-subtitle">AI-Powered Software Requirement Analysis & Code Generation Assistant</p>
+                </div>
+            </div>
 
-        <!-- Top Header Bar -->
-        <div class="top-bar">
-            <div class="page-header">
-                <h1 id="view-title">Dashboard</h1>
-                <p id="view-desc">AI-Powered Software Requirement & Code Engineering Assistant</p>
+            <div class="top-bar-right">
+                <div class="connection-pill" id="header-status-pill">
+                    <span class="status-dot" id="header-status-dot"></span>
+                    <span id="api-status-text" class="status-label">Checking API...</span>
+                </div>
+                <button id="btn-test-api" class="btn btn-secondary btn-compact" title="Verify Connection to Gemini Engine">
+                    <i data-lucide="refresh-cw" class="icon-sm"></i>
+                    <span>Verify API</span>
+                </button>
             </div>
-            <div class="header-status-pill">
-                <span class="status-dot"></span>
-                <span id="api-status-text">LLM Service: Ready</span>
+        </header>
+
+        <!-- Demo Mode Notice Banner -->
+        <div id="demo-mode-banner" class="alert-banner warning" style="display: none;">
+            <div class="alert-content">
+                <i data-lucide="alert-triangle" class="alert-icon"></i>
+                <div>
+                    <strong>Demo Mode Active:</strong> Operating with realistic offline mock data. Configure <code>GEMINI_API_KEY</code> in <code>.env</code> for live neural model inference.
+                </div>
             </div>
+            <span class="badge badge-warning">OFFLINE DEMO</span>
         </div>
 
         <!-- ===================================================================
-             1. DASHBOARD VIEW
+             1. OVERVIEW / DASHBOARD VIEW
              =================================================================== -->
         <section id="view-dashboard" class="tab-view active">
-            <div class="card-grid">
-                <div class="stat-card">
-                    <div class="stat-icon projects">📁</div>
-                    <div class="stat-info">
-                        <h3 id="stat-projects">0</h3>
-                        <p>Projects Analyzed</p>
+            <!-- Hero Command Bar -->
+            <div class="panel-card hero-prompt-panel">
+                <div class="hero-prompt-header">
+                    <div>
+                        <h2 class="hero-title">What would you like to engineer?</h2>
+                        <p class="hero-subtitle">Describe your software system, feature requirement, or paste code to begin automated analysis.</p>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon code">⚡</div>
-                    <div class="stat-info">
-                        <h3 id="stat-generations">0</h3>
-                        <p>Code Generations</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon reviews">🔍</div>
-                    <div class="stat-info">
-                        <h3 id="stat-reviews">0</h3>
-                        <p>Code Reviews</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon analyses">📊</div>
-                    <div class="stat-info">
-                        <h3 id="stat-analyses">0</h3>
-                        <p>Requirement Analyses</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Action Hub -->
-            <div class="section-card">
-                <div class="card-title">🚀 What do you want to build today?</div>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">Select a quick action or choose a pre-configured sample requirement below to get started immediately.</p>
-                
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-                    <button class="btn btn-primary nav-trigger" data-tab="analyzer">
-                        <span>🎯 Analyze Requirement</span>
-                    </button>
-                    <button class="btn btn-secondary nav-trigger" data-tab="generator">
-                        <span>⚡ Generate Code</span>
-                    </button>
-                    <button class="btn btn-outline nav-trigger" data-tab="reviewer">
-                        <span>🔍 Review Code</span>
-                    </button>
                 </div>
 
-                <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
-                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Quick Sample Project Presets:</span>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
-                        <button class="demo-quick-btn load-preset" data-preset="student">
-                            🎓 Student Management System (Python)
+                <div class="hero-input-wrapper">
+                    <textarea id="hero-prompt-input" class="hero-textarea" placeholder="e.g. Build a Python student management system with administrative CRUD operations, record search, and persistence..."></textarea>
+                    
+                    <div class="hero-actions-bar">
+                        <div class="hero-buttons-group">
+                            <button id="hero-btn-analyze" class="btn btn-primary">
+                                <i data-lucide="clipboard-list" class="icon-sm"></i>
+                                <span>Analyze Requirements</span>
+                            </button>
+                            <button id="hero-btn-generate" class="btn btn-secondary">
+                                <i data-lucide="code-2" class="icon-sm"></i>
+                                <span>Generate Code</span>
+                            </button>
+                            <button id="hero-btn-review" class="btn btn-outline">
+                                <i data-lucide="shield-check" class="icon-sm"></i>
+                                <span>Review Code</span>
+                            </button>
+                            <button id="hero-btn-explain" class="btn btn-outline">
+                                <i data-lucide="sparkles" class="icon-sm"></i>
+                                <span>Explain Code</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="presets-row">
+                    <span class="presets-label">Preset Blueprints:</span>
+                    <div class="presets-chips">
+                        <button class="preset-chip load-preset" data-preset="student">
+                            <span class="preset-lang">Python</span>
+                            <span>Student Management System</span>
                         </button>
-                        <button class="demo-quick-btn load-preset" data-preset="ecommerce">
-                            🛒 E-Commerce REST API (JavaScript)
+                        <button class="preset-chip load-preset" data-preset="ecommerce">
+                            <span class="preset-lang">JavaScript</span>
+                            <span>E-Commerce REST API</span>
                         </button>
-                        <button class="demo-quick-btn load-preset" data-preset="library">
-                            📚 Library Management System (C++)
+                        <button class="preset-chip load-preset" data-preset="library">
+                            <span class="preset-lang">C++</span>
+                            <span>Library Management System</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Projects List -->
-            <div class="section-card">
-                <div class="card-title">🕒 Recent Projects</div>
-                <div id="recent-projects-list">
-                    <p style="color: var(--text-muted); font-size: 0.88rem;">Loading recent history...</p>
+            <!-- Compact Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Projects</span>
+                        <i data-lucide="folder-git-2" class="metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="stat-projects">0</div>
+                    <div class="metric-meta">Saved in SQLite database</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Requirement Analyses</span>
+                        <i data-lucide="clipboard-check" class="metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="stat-analyses">0</div>
+                    <div class="metric-meta">Ambiguity & specs evaluated</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Code Generations</span>
+                        <i data-lucide="terminal" class="metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="stat-generations">0</div>
+                    <div class="metric-meta">Multi-language implementations</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Security Reviews</span>
+                        <i data-lucide="shield-alert" class="metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="stat-reviews">0</div>
+                    <div class="metric-meta">Static flaws & audits completed</div>
+                </div>
+            </div>
+
+            <!-- Recent Projects Table -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Recent Projects</h3>
+                        <p class="panel-subtitle">Latest software requirement sessions and generated solutions.</p>
+                    </div>
+                    <button class="btn btn-outline btn-compact nav-trigger" data-tab="history">
+                        <span>View All History</span>
+                        <i data-lucide="arrow-right" class="icon-sm"></i>
+                    </button>
+                </div>
+                <div id="recent-projects-list" class="table-container">
+                    <p class="text-muted-state">Loading recent history records...</p>
                 </div>
             </div>
         </section>
@@ -157,110 +237,156 @@
              2. REQUIREMENT ANALYZER VIEW
              =================================================================== -->
         <section id="view-analyzer" class="tab-view">
-            <div class="section-card">
-                <div class="card-title">🎯 Software Requirement Analysis & Ambiguity Detector</div>
-                
-                <button class="demo-quick-btn" id="btn-load-demo-req">
-                    ✨ Load Ready-to-Use Demo Requirement (Student Management System)
-                </button>
-
-                <div class="form-group">
-                    <label class="form-label">Describe your software requirement:</label>
-                    <textarea id="analyzer-req-input" placeholder="Example: Create a Python-based student management system that allows an administrator to add, update, delete and search student records."></textarea>
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Requirement Specification & Ambiguity Detector</h3>
+                        <p class="panel-subtitle">Deconstructs software requirements into formal functional specs and identifies incomplete logic.</p>
+                    </div>
+                    <button class="btn btn-outline btn-compact" id="btn-load-demo-req">
+                        <i data-lucide="sparkles" class="icon-sm"></i>
+                        <span>Load Sample Requirement</span>
+                    </button>
                 </div>
 
-                <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="analyzer-req-input">Requirement Specification</label>
+                    <textarea id="analyzer-req-input" class="form-textarea" rows="4" placeholder="Detail the business logic, expected entities, operations, and constraints..."></textarea>
+                </div>
+
+                <div class="form-grid-3">
                     <div class="form-group">
-                        <label class="form-label">Project Type</label>
-                        <select id="analyzer-project-type">
+                        <label class="form-label" for="analyzer-project-type">Architecture Type</label>
+                        <select id="analyzer-project-type" class="form-select">
                             <option value="Web App">Web Application</option>
-                            <option value="CLI / Console">CLI / Console App</option>
+                            <option value="CLI / Console">CLI / Console Tool</option>
                             <option value="REST API">REST API / Microservice</option>
-                            <option value="Desktop App">Desktop GUI App</option>
+                            <option value="Desktop App">Desktop GUI Application</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">Programming Language</label>
-                        <select id="analyzer-language">
+                        <label class="form-label" for="analyzer-language">Target Language</label>
+                        <select id="analyzer-language" class="form-select">
                             <option value="Python">Python</option>
                             <option value="JavaScript">JavaScript</option>
                             <option value="C++">C++</option>
                             <option value="Java">Java</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">Complexity Level</label>
-                        <select id="analyzer-complexity">
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate" selected>Intermediate</option>
-                            <option value="Advanced">Advanced</option>
+                        <label class="form-label" for="analyzer-complexity">Scope Complexity</label>
+                        <select id="analyzer-complexity" class="form-select">
+                            <option value="Beginner">Beginner / Prototype</option>
+                            <option value="Intermediate" selected>Intermediate / Standard</option>
+                            <option value="Advanced">Advanced / Enterprise</option>
                         </select>
                     </div>
                 </div>
 
-                <button class="btn btn-primary" id="btn-run-analyzer">
-                    <span>🎯 Analyze Requirement</span>
-                </button>
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="btn-run-analyzer">
+                        <i data-lucide="search-code" class="icon-sm"></i>
+                        <span>Analyze Requirements</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- Loading Spinner -->
-            <div id="analyzer-loading" class="loading-overlay">
+            <!-- Loading Indicator -->
+            <div id="analyzer-loading" class="loading-state" style="display: none;">
                 <div class="spinner"></div>
-                <div class="loading-text">Analyzing software requirements & detecting ambiguities...</div>
+                <div class="loading-label">Evaluating specifications and scanning for ambiguities...</div>
             </div>
 
-            <!-- Analysis Output Container -->
+            <!-- Analysis Output -->
             <div id="analyzer-output" style="display: none;">
-                <!-- Ambiguity Warning Banner (Rendered dynamically if is_ambiguous is True) -->
-                <div id="ambiguity-warning-box"></div>
+                <!-- Ambiguity Alert Banner -->
+                <div id="ambiguity-warning-box" class="ambiguity-panel"></div>
 
-                <div class="section-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h2 style="font-size: 1.2rem; color: var(--primary);">📋 Structured Requirement Specification</h2>
-                        <button class="btn btn-secondary btn-sm" id="btn-proceed-to-code">
-                            ⚡ Proceed to Code Generation →
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div>
+                            <h3 class="panel-title">Structured Requirement Breakdown</h3>
+                            <p class="panel-subtitle">Formalized system definitions parsed from your natural language description.</p>
+                        </div>
+                        <button class="btn btn-primary btn-compact" id="btn-proceed-to-code">
+                            <span>Proceed to Code Generation</span>
+                            <i data-lucide="arrow-right" class="icon-sm"></i>
                         </button>
                     </div>
 
-                    <div style="margin-bottom: 1.5rem;">
-                        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">📌 Problem Statement</h3>
-                        <p id="res-problem-statement" style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.3rem;"></p>
+                    <!-- Problem Statement -->
+                    <div class="spec-section">
+                        <div class="spec-section-header">
+                            <i data-lucide="target" class="icon-sm text-primary"></i>
+                            <h4 class="spec-heading">Problem Statement</h4>
+                        </div>
+                        <p id="res-problem-statement" class="spec-body-text"></p>
                     </div>
 
-                    <div class="form-row" style="margin-bottom: 1.5rem;">
-                        <div>
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">⚙️ Functional Requirements</h3>
-                            <ul id="res-functional-reqs" style="margin-left: 1.25rem; font-size: 0.88rem; color: var(--text-muted); margin-top: 0.3rem;"></ul>
+                    <!-- Functional & Non-Functional Requirements Grid -->
+                    <div class="spec-two-column-grid">
+                        <div class="spec-box">
+                            <div class="spec-section-header">
+                                <i data-lucide="check-circle-2" class="icon-sm text-success"></i>
+                                <h4 class="spec-heading">Functional Requirements</h4>
+                            </div>
+                            <ul id="res-functional-reqs" class="spec-list check-list"></ul>
                         </div>
-                        <div>
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">🛡️ Non-Functional Requirements</h3>
-                            <ul id="res-nonfunctional-reqs" style="margin-left: 1.25rem; font-size: 0.88rem; color: var(--text-muted); margin-top: 0.3rem;"></ul>
-                        </div>
-                    </div>
 
-                    <div class="form-row" style="margin-bottom: 1.5rem;">
-                        <div>
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">👤 Actors / Users</h3>
-                            <div id="res-actors" class="detail-pill-group"></div>
-                        </div>
-                        <div>
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">📥 System Inputs</h3>
-                            <div id="res-inputs" class="detail-pill-group"></div>
-                        </div>
-                        <div>
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">📤 System Outputs</h3>
-                            <div id="res-outputs" class="detail-pill-group"></div>
+                        <div class="spec-box">
+                            <div class="spec-section-header">
+                                <i data-lucide="shield" class="icon-sm text-accent"></i>
+                                <h4 class="spec-heading">Non-Functional Requirements</h4>
+                            </div>
+                            <ul id="res-nonfunctional-reqs" class="spec-list"></ul>
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div>
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">🔒 Constraints & Assumptions</h3>
-                            <ul id="res-constraints" style="margin-left: 1.25rem; font-size: 0.88rem; color: var(--text-muted); margin-top: 0.3rem;"></ul>
+                    <!-- Actors, Inputs, Outputs -->
+                    <div class="spec-three-column-grid">
+                        <div class="spec-box">
+                            <div class="spec-section-header">
+                                <i data-lucide="users" class="icon-sm text-primary"></i>
+                                <h4 class="spec-heading">Actors & Roles</h4>
+                            </div>
+                            <div id="res-actors" class="pills-container"></div>
                         </div>
-                        <div>
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">💡 Suggested Improvements</h3>
-                            <ul id="res-suggestions" style="margin-left: 1.25rem; font-size: 0.88rem; color: var(--text-muted); margin-top: 0.3rem;"></ul>
+
+                        <div class="spec-box">
+                            <div class="spec-section-header">
+                                <i data-lucide="log-in" class="icon-sm text-primary"></i>
+                                <h4 class="spec-heading">System Inputs</h4>
+                            </div>
+                            <div id="res-inputs" class="pills-container"></div>
+                        </div>
+
+                        <div class="spec-box">
+                            <div class="spec-section-header">
+                                <i data-lucide="log-out" class="icon-sm text-primary"></i>
+                                <h4 class="spec-heading">System Outputs</h4>
+                            </div>
+                            <div id="res-outputs" class="pills-container"></div>
+                        </div>
+                    </div>
+
+                    <!-- Constraints & Suggestions -->
+                    <div class="spec-two-column-grid">
+                        <div class="spec-box">
+                            <div class="spec-section-header">
+                                <i data-lucide="lock" class="icon-sm text-muted"></i>
+                                <h4 class="spec-heading">Constraints & Assumptions</h4>
+                            </div>
+                            <ul id="res-constraints" class="spec-list"></ul>
+                        </div>
+
+                        <div class="spec-box">
+                            <div class="spec-section-header">
+                                <i data-lucide="lightbulb" class="icon-sm text-warning"></i>
+                                <h4 class="spec-heading">Recommended Enhancements</h4>
+                            </div>
+                            <ul id="res-suggestions" class="spec-list"></ul>
                         </div>
                     </div>
                 </div>
@@ -271,35 +397,42 @@
              3. CODE GENERATOR VIEW
              =================================================================== -->
         <section id="view-generator" class="tab-view">
-            <div class="section-card">
-                <div class="card-title">⚡ Automated Source Code Generator</div>
-
-                <div class="form-group">
-                    <label class="form-label">Software Requirement / Specification:</label>
-                    <textarea id="gen-req-input" placeholder="Enter requirement or select from Requirement Analyzer..."></textarea>
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Automated Source Code Synthesis</h3>
+                        <p class="panel-subtitle">Produces clean, production-ready implementation code with architectural complexity metrics.</p>
+                    </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="gen-req-input">Target Requirement / Feature Specification</label>
+                    <textarea id="gen-req-input" class="form-textarea" rows="4" placeholder="Enter feature specifications or populate automatically from Requirement Analyzer..."></textarea>
+                </div>
+
+                <div class="form-grid-3">
                     <div class="form-group">
-                        <label class="form-label">Programming Language</label>
-                        <select id="gen-language">
+                        <label class="form-label" for="gen-language">Language</label>
+                        <select id="gen-language" class="form-select">
                             <option value="Python">Python</option>
+                            <option value="JavaScript">JavaScript</option>
                             <option value="C++">C++</option>
                             <option value="Java">Java</option>
-                            <option value="JavaScript">JavaScript</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">Difficulty / Scope</label>
-                        <select id="gen-complexity">
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate" selected>Intermediate</option>
-                            <option value="Advanced">Advanced</option>
+                        <label class="form-label" for="gen-complexity">Complexity Target</label>
+                        <select id="gen-complexity" class="form-select">
+                            <option value="Beginner">Beginner / Concise</option>
+                            <option value="Intermediate" selected>Intermediate / Modular</option>
+                            <option value="Advanced">Advanced / Enterprise</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">Code Architecture Style</label>
-                        <select id="gen-style">
+                        <label class="form-label" for="gen-style">Architecture Pattern</label>
+                        <select id="gen-style" class="form-select">
                             <option value="Clean/Modular">Clean / Modular</option>
                             <option value="Object-Oriented">Object-Oriented (OOP)</option>
                             <option value="Functional">Functional</option>
@@ -308,57 +441,81 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary" id="btn-run-generator">
-                    <span>⚡ Generate Code</span>
-                </button>
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="btn-run-generator">
+                        <i data-lucide="terminal" class="icon-sm"></i>
+                        <span>Generate Source Code</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- Loading Spinner -->
-            <div id="generator-loading" class="loading-overlay">
+            <!-- Loading Indicator -->
+            <div id="generator-loading" class="loading-state" style="display: none;">
                 <div class="spinner"></div>
-                <div class="loading-text">Generating production-ready source code...</div>
+                <div class="loading-label">Synthesizing production source code and calculating computational complexity...</div>
             </div>
 
-            <!-- Code Output Display -->
+            <!-- Output Container -->
             <div id="generator-output" style="display: none;">
-                <div class="section-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <h2 style="font-size: 1.1rem; color: var(--text-main);">💻 Generated Source Code</h2>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn btn-outline btn-sm" id="btn-copy-code">📋 Copy</button>
-                            <button class="btn btn-outline btn-sm" id="btn-download-code">💾 Download</button>
-                            <button class="btn btn-secondary btn-sm" id="btn-explain-generated">💡 Explain Code</button>
-                            <button class="btn btn-primary btn-sm" id="btn-review-generated">🔍 Review Code</button>
+                <div class="panel-card no-padding">
+                    <!-- Code Terminal Header -->
+                    <div class="terminal-header">
+                        <div class="terminal-left">
+                            <span class="terminal-badge" id="code-lang-label">Python 3</span>
+                            <span class="terminal-subtext">main_solution</span>
+                        </div>
+                        <div class="terminal-actions">
+                            <button class="btn-action-ghost" id="btn-copy-code" title="Copy code to clipboard">
+                                <i data-lucide="copy" class="icon-sm"></i>
+                                <span>Copy</span>
+                            </button>
+                            <button class="btn-action-ghost" id="btn-download-code" title="Download code file">
+                                <i data-lucide="download" class="icon-sm"></i>
+                                <span>Download</span>
+                            </button>
+                            <div class="terminal-divider"></div>
+                            <button class="btn-action-ghost" id="btn-explain-generated" title="Explain this code step-by-step">
+                                <i data-lucide="sparkles" class="icon-sm"></i>
+                                <span>Explain</span>
+                            </button>
+                            <button class="btn-action-ghost" id="btn-review-generated" title="Run security and quality review">
+                                <i data-lucide="shield-check" class="icon-sm"></i>
+                                <span>Review</span>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Syntax Highlight Viewport -->
-                    <div class="code-viewport-container">
-                        <div class="code-viewport-header">
-                            <span id="code-lang-label">Python 3</span>
-                            <span>UTF-8</span>
-                        </div>
-                        <div class="code-viewport-body">
-                            <pre><code id="generated-code-box"># Generated code will render here...</code></pre>
-                        </div>
+                    <!-- Code Body -->
+                    <div class="code-editor-viewport">
+                        <pre><code id="generated-code-box"># Generated solution will appear here...</code></pre>
                     </div>
                 </div>
 
-                <!-- Metrics & Complexity Section -->
-                <div class="section-card">
-                    <div class="card-title">📊 Architectural Breakdown & Complexity</div>
-                    <div class="form-row">
+                <!-- Algorithmic & Complexity Metrics -->
+                <div class="panel-card">
+                    <div class="panel-header">
                         <div>
-                            <h3 style="font-size: 0.9rem; font-weight: 700;">🧩 Core Algorithm / Design Pattern</h3>
-                            <p id="gen-algorithm-text" style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;"></p>
+                            <h3 class="panel-title">Architectural Breakdown</h3>
+                            <p class="panel-subtitle">Algorithmic pattern and asymptotic efficiency guarantees.</p>
                         </div>
-                        <div>
-                            <h3 style="font-size: 0.9rem; font-weight: 700;">⏱️ Time Complexity</h3>
-                            <span id="gen-time-complexity" class="badge badge-good" style="margin-top: 0.25rem;"></span>
+                    </div>
+
+                    <div class="complexity-grid">
+                        <div class="complexity-card">
+                            <span class="complexity-title">Algorithm & Pattern</span>
+                            <p id="gen-algorithm-text" class="complexity-desc">—</p>
                         </div>
-                        <div>
-                            <h3 style="font-size: 0.9rem; font-weight: 700;">💾 Space Complexity</h3>
-                            <span id="gen-space-complexity" class="badge badge-low" style="margin-top: 0.25rem;"></span>
+                        <div class="complexity-card">
+                            <span class="complexity-title">Time Complexity</span>
+                            <div class="complexity-badge-wrapper">
+                                <span id="gen-time-complexity" class="badge badge-success">O(N)</span>
+                            </div>
+                        </div>
+                        <div class="complexity-card">
+                            <span class="complexity-title">Space Complexity</span>
+                            <div class="complexity-badge-wrapper">
+                                <span id="gen-space-complexity" class="badge badge-info">O(1)</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -369,18 +526,23 @@
              4. CODE REVIEWER VIEW
              =================================================================== -->
         <section id="view-reviewer" class="tab-view">
-            <div class="section-card">
-                <div class="card-title">🔍 Automated Code Reviewer & Security Auditor</div>
-                
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Static Code Reviewer & Security Auditor</h3>
+                        <p class="panel-subtitle">Scans code for logic flaws, vulnerabilities, code smells, and performance bottlenecks.</p>
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label class="form-label">Paste Source Code to Review:</label>
-                    <textarea id="review-code-input" placeholder="Paste source code here for static review and security analysis..." style="font-family: monospace;"></textarea>
+                    <label class="form-label" for="review-code-input">Source Code for Audit</label>
+                    <textarea id="review-code-input" class="form-textarea code-font" rows="8" placeholder="Paste source code snippet to review..."></textarea>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Language</label>
-                        <select id="review-language">
+                    <div class="form-group" style="max-width: 240px;">
+                        <label class="form-label" for="review-language">Language</label>
+                        <select id="review-language" class="form-select">
                             <option value="Python">Python</option>
                             <option value="JavaScript">JavaScript</option>
                             <option value="C++">C++</option>
@@ -389,45 +551,75 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary" id="btn-run-reviewer">
-                    <span>🔍 Review Code</span>
-                </button>
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="btn-run-reviewer">
+                        <i data-lucide="shield-alert" class="icon-sm"></i>
+                        <span>Audit Code</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- Loading Spinner -->
-            <div id="reviewer-loading" class="loading-overlay">
+            <!-- Loading Indicator -->
+            <div id="reviewer-loading" class="loading-state" style="display: none;">
                 <div class="spinner"></div>
-                <div class="loading-text">Analyzing code for bugs, security risks, and optimization...</div>
+                <div class="loading-label">Scanning AST, auditing security vulnerabilities, and computing quality score...</div>
             </div>
 
-            <!-- Review Results Output -->
+            <!-- Review Results Container -->
             <div id="reviewer-output" style="display: none;">
-                <div class="section-card">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <!-- Score & Overview Card -->
+                <div class="panel-card">
+                    <div class="review-score-hero">
                         <div>
-                            <h2 style="font-size: 1.2rem; color: var(--text-main);">Overall Code Quality Score</h2>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">Based on maintainability, efficiency, security, and bugs.</p>
+                            <span class="review-score-label">OVERALL CODE QUALITY SCORE</span>
+                            <h3 class="panel-title" style="margin-top: 0.25rem;">Quality & Security Assessment</h3>
+                            <p class="panel-subtitle">Aggregated index based on bugs, security posture, and maintainability.</p>
                         </div>
-                        <div style="width: 70px; height: 70px; border-radius: 50%; background-color: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; border: 3px solid var(--primary);" id="review-score-badge">
-                            92
+                        <div class="score-circle-container">
+                            <div class="score-circle" id="review-score-badge">92</div>
+                            <span class="score-scale">/ 100</span>
                         </div>
                     </div>
+                </div>
 
-                    <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem;">Detected Issues & Severity Badges</h3>
-                    <div id="review-issues-list" style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;"></div>
-
-                    <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem;">💡 Code Quality Suggestions</h3>
-                    <ul id="review-suggestions-list" style="margin-left: 1.25rem; font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;"></ul>
-
-                    <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem;">✨ Improved & Refactored Version</h3>
-                    <div class="code-viewport-container">
-                        <div class="code-viewport-header">
-                            <span>Refactored Source</span>
-                            <button class="btn btn-outline btn-sm" id="btn-copy-improved">Copy Improved Code</button>
+                <!-- Issues Card -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div>
+                            <h3 class="panel-title">Identified Issues & Severity</h3>
+                            <p class="panel-subtitle">Potential vulnerabilities, logical bugs, and performance warnings.</p>
                         </div>
-                        <div class="code-viewport-body">
-                            <pre><code id="improved-code-box">// Refactored version will appear here...</code></pre>
+                    </div>
+                    <div id="review-issues-list" class="issues-list"></div>
+                </div>
+
+                <!-- Suggestions Card -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div>
+                            <h3 class="panel-title">Quality & Refactoring Recommendations</h3>
+                            <p class="panel-subtitle">Actionable suggestions to improve idiomatic patterns and resilience.</p>
                         </div>
+                    </div>
+                    <ul id="review-suggestions-list" class="spec-list check-list"></ul>
+                </div>
+
+                <!-- Refactored Code Container -->
+                <div class="panel-card no-padding">
+                    <div class="terminal-header">
+                        <div class="terminal-left">
+                            <span class="terminal-badge">Refactored</span>
+                            <span class="terminal-subtext">Optimized & Hardened Implementation</span>
+                        </div>
+                        <div class="terminal-actions">
+                            <button class="btn-action-ghost" id="btn-copy-improved">
+                                <i data-lucide="copy" class="icon-sm"></i>
+                                <span>Copy Improved Code</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="code-editor-viewport">
+                        <pre><code id="improved-code-box">// Refactored version will render here...</code></pre>
                     </div>
                 </div>
             </div>
@@ -437,18 +629,23 @@
              5. CODE EXPLAINER VIEW
              =================================================================== -->
         <section id="view-explainer" class="tab-view">
-            <div class="section-card">
-                <div class="card-title">💡 Beginner-Friendly Code Explainer</div>
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Step-by-Step Logic Explainer</h3>
+                        <p class="panel-subtitle">Deconstructs complex algorithms into plain-English execution steps, key functions, and variables.</p>
+                    </div>
+                </div>
 
                 <div class="form-group">
-                    <label class="form-label">Paste Source Code for Explanation:</label>
-                    <textarea id="explain-code-input" placeholder="Paste source code here..." style="font-family: monospace;"></textarea>
+                    <label class="form-label" for="explain-code-input">Source Code</label>
+                    <textarea id="explain-code-input" class="form-textarea code-font" rows="8" placeholder="Paste source code to explain..."></textarea>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Language</label>
-                        <select id="explain-language">
+                    <div class="form-group" style="max-width: 240px;">
+                        <label class="form-label" for="explain-language">Language</label>
+                        <select id="explain-language" class="form-select">
                             <option value="Python">Python</option>
                             <option value="JavaScript">JavaScript</option>
                             <option value="C++">C++</option>
@@ -457,33 +654,64 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary" id="btn-run-explainer">
-                    <span>💡 Explain Code</span>
-                </button>
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="btn-run-explainer">
+                        <i data-lucide="sparkles" class="icon-sm"></i>
+                        <span>Explain Code</span>
+                    </button>
+                </div>
             </div>
 
-            <div id="explainer-loading" class="loading-overlay">
+            <!-- Loading Indicator -->
+            <div id="explainer-loading" class="loading-state" style="display: none;">
                 <div class="spinner"></div>
-                <div class="loading-text">Parsing step-by-step code logic...</div>
+                <div class="loading-label">Tracing execution flow and extracting architectural components...</div>
             </div>
 
+            <!-- Output Container -->
             <div id="explainer-output" style="display: none;">
-                <div class="section-card">
-                    <h2 style="font-size: 1.1rem; color: var(--primary); margin-bottom: 0.5rem;">📌 Overview Summary</h2>
-                    <p id="exp-summary" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem;"></p>
-
-                    <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem;">🚶 Step-by-Step Logic Execution</h3>
-                    <ol id="exp-steps-list" style="margin-left: 1.25rem; font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;"></ol>
-
-                    <div class="form-row">
+                <!-- Summary Card -->
+                <div class="panel-card">
+                    <div class="panel-header">
                         <div>
-                            <h3 style="font-size: 0.95rem; font-weight: 700;">📦 Key Functions & Classes</h3>
-                            <ul id="exp-components-list" style="margin-left: 1.25rem; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;"></ul>
+                            <h3 class="panel-title">High-Level Summary</h3>
+                            <p class="panel-subtitle">Core purpose and architecture of the provided implementation.</p>
                         </div>
+                    </div>
+                    <p id="exp-summary" class="spec-body-text"></p>
+                </div>
+
+                <!-- Execution Timeline -->
+                <div class="panel-card">
+                    <div class="panel-header">
                         <div>
-                            <h3 style="font-size: 0.95rem; font-weight: 700;">🔑 Important Variables</h3>
-                            <ul id="exp-variables-list" style="margin-left: 1.25rem; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;"></ul>
+                            <h3 class="panel-title">Execution Flow</h3>
+                            <p class="panel-subtitle">Sequential order of operations during runtime.</p>
                         </div>
+                    </div>
+                    <ol id="exp-steps-list" class="execution-steps-list"></ol>
+                </div>
+
+                <!-- Components & Variables Grid -->
+                <div class="spec-two-column-grid">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3 class="panel-title">Key Functions & Classes</h3>
+                                <p class="panel-subtitle">Primary routines and responsibilities.</p>
+                            </div>
+                        </div>
+                        <ul id="exp-components-list" class="spec-list"></ul>
+                    </div>
+
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3 class="panel-title">Important Variables & State</h3>
+                                <p class="panel-subtitle">Key data structures and parameters.</p>
+                            </div>
+                        </div>
+                        <ul id="exp-variables-list" class="spec-list"></ul>
                     </div>
                 </div>
             </div>
@@ -493,26 +721,32 @@
              6. DOCUMENTATION GENERATOR VIEW
              =================================================================== -->
         <section id="view-docs" class="tab-view">
-            <div class="section-card">
-                <div class="card-title">📚 Automatic Software Documentation Generator (SRS)</div>
-
-                <div class="form-group">
-                    <label class="form-label">Project Requirement / System Description:</label>
-                    <textarea id="docs-req-input" placeholder="Enter software requirement to generate SRS specification document..."></textarea>
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Software Requirement Specification (SRS) Generator</h3>
+                        <p class="panel-subtitle">Generates formal IEEE-style software requirement documentation ready for PDF or Markdown export.</p>
+                    </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="docs-req-input">System Description / Requirement</label>
+                    <textarea id="docs-req-input" class="form-textarea" rows="4" placeholder="Enter system description or leave blank to use currently active requirement..."></textarea>
+                </div>
+
+                <div class="form-grid-2">
                     <div class="form-group">
-                        <label class="form-label">Project Type</label>
-                        <select id="docs-project-type">
+                        <label class="form-label" for="docs-project-type">System Type</label>
+                        <select id="docs-project-type" class="form-select">
                             <option value="Web App">Web Application</option>
                             <option value="CLI / Console">CLI App</option>
-                            <option value="REST API">REST API</option>
+                            <option value="REST API">REST API / Microservice</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">Tech Stack</label>
-                        <select id="docs-language">
+                        <label class="form-label" for="docs-language">Primary Tech Stack</label>
+                        <select id="docs-language" class="form-select">
                             <option value="Python">Python</option>
                             <option value="JavaScript">JavaScript</option>
                             <option value="C++">C++</option>
@@ -521,25 +755,46 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary" id="btn-run-docs">
-                    <span>📚 Generate Documentation</span>
-                </button>
-            </div>
-
-            <div id="docs-loading" class="loading-overlay">
-                <div class="spinner"></div>
-                <div class="loading-text">Generating comprehensive Software Requirement Specification (SRS)...</div>
-            </div>
-
-            <div id="docs-output" style="display: none;">
-                <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-bottom: 1rem;">
-                    <button class="btn btn-outline btn-sm" id="btn-copy-doc">📋 Copy Text</button>
-                    <button class="btn btn-outline btn-sm" id="btn-download-doc-md">💾 Download .MD</button>
-                    <button class="btn btn-secondary btn-sm" id="btn-download-doc-pdf">📄 Download PDF</button>
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="btn-run-docs">
+                        <i data-lucide="file-text" class="icon-sm"></i>
+                        <span>Generate SRS Document</span>
+                    </button>
                 </div>
+            </div>
 
-                <div class="markdown-container" id="markdown-doc-body">
-                    <!-- Formatted Documentation Renders Here -->
+            <!-- Loading Indicator -->
+            <div id="docs-loading" class="loading-state" style="display: none;">
+                <div class="spinner"></div>
+                <div class="loading-label">Compiling formal IEEE Software Requirement Specification...</div>
+            </div>
+
+            <!-- Output Container -->
+            <div id="docs-output" style="display: none;">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div>
+                            <h3 class="panel-title">Generated SRS Document</h3>
+                            <p class="panel-subtitle">Standardized software engineering requirement specification.</p>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-outline btn-compact" id="btn-copy-doc">
+                                <i data-lucide="copy" class="icon-sm"></i>
+                                <span>Copy Markdown</span>
+                            </button>
+                            <button class="btn btn-outline btn-compact" id="btn-download-doc-md">
+                                <i data-lucide="download" class="icon-sm"></i>
+                                <span>Download .MD</span>
+                            </button>
+                            <button class="btn btn-secondary btn-compact" id="btn-download-doc-pdf">
+                                <i data-lucide="file-down" class="icon-sm"></i>
+                                <span>Export PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Markdown Render Container -->
+                    <div class="markdown-preview" id="markdown-doc-body"></div>
                 </div>
             </div>
         </section>
@@ -548,15 +803,37 @@
              7. PROJECT HISTORY VIEW
              =================================================================== -->
         <section id="view-history" class="tab-view">
-            <div class="section-card">
-                <div class="card-title">📜 Project History & Saved Analyses</div>
-                <div id="history-projects-table">
-                    <!-- Rendered via JS -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Project History & Saved Sessions</h3>
+                        <p class="panel-subtitle">Search and revisit past requirements, code solutions, and security reviews.</p>
+                    </div>
+                    <div class="history-filter-controls">
+                        <div class="search-input-wrapper">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="history-search-input" class="search-input" placeholder="Search projects by name or requirement...">
+                        </div>
+                        <select id="history-lang-filter" class="form-select filter-select">
+                            <option value="ALL">All Languages</option>
+                            <option value="Python">Python</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="C++">C++</option>
+                            <option value="Java">Java</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="history-projects-table" class="table-container">
+                    <!-- Populated dynamically via JS -->
                 </div>
             </div>
         </section>
     </main>
 </div>
+
+<!-- Global Toast Notification Container -->
+<div id="toast-container" class="toast-container"></div>
 
 <!-- Main Application JS -->
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
